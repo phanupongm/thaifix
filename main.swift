@@ -8,14 +8,14 @@ import Carbon
 
 // MARK: - ตารางแป้น เกษมณี <-> QWERTY (ใช้ unicodeScalars เพราะสระ/วรรณยุกต์ไทยเป็นตัวประกอบ)
 
-let engKeys = Array(
+let engKeys = Array((
     "`1234567890-=qwertyuiop[]\\asdfghjkl;'zxcvbnm,./" +
     "~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?"
-    .unicodeScalars)
-let thaiKeys = Array(
+    ).unicodeScalars)
+let thaiKeys = Array((
     "_ๅ/-ภถุึคตจขชๆไำพะัีรนยบลฃฟหกดเ้่าสวงผปแอิืทมใฝ" +
     "%+๑๒๓๔ู฿๕๖๗๘๙๐\"ฎฑธํ๊ณฯญฐ,ฅฤฆฏโฌ็๋ษศซ.()ฉฮฺ์?ฒฬฦ"
-    .unicodeScalars)
+    ).unicodeScalars)
 
 let eng2thai: [Unicode.Scalar: Unicode.Scalar] = Dictionary(uniqueKeysWithValues: zip(engKeys, thaiKeys))
 let thai2eng: [Unicode.Scalar: Unicode.Scalar] = Dictionary(uniqueKeysWithValues: zip(thaiKeys, engKeys))
