@@ -158,6 +158,15 @@ func smartFix(_ text: String) -> (String, Bool)? {
     return (out, lang)
 }
 
+/// กดคีย์ลัดแล้วแต่ไม่เจอคำที่ผิดชัด ๆ → แปลงคำสุดท้ายให้ (ผู้ใช้ตั้งใจกดแล้ว ดีกว่าไม่ทำอะไร)
+func lastWordFix(_ line: String) -> (String, Bool)? {
+    var toks = tokenize(line)
+    guard let i = toks.lastIndex(where: { script(of: $0) != .neutral }) else { return nil }
+    let (c, toThai) = convert(toks[i])
+    toks[i] = c
+    return (toks.joined(), toThai)
+}
+
 // MARK: - คีย์บอร์ด / คลิปบอร์ด
 
 func postKey(_ key: Int, _ flags: CGEventFlags) {
@@ -248,7 +257,7 @@ final class Fixer {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
                         guard pb.changeCount != before2,
                               let line = pb.string(forType: .string),
-                              let result = smartFix(line) else {
+                              let result = smartFix(line) ?? lastWordFix(line) else {
                             postKey(kVK_RightArrow, [])           // ยกเลิกการเลือก
                             restorePasteboard(saved); self.busy = false; return
                         }
@@ -301,7 +310,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // คีย์ลัด ⌥⌘L
         var spec = EventTypeSpec(eventClass: OSType(kEventClassKeyboard), eventKind: UInt32(kEventHotKeyPressed))
         InstallEventHandler(GetApplicationEventTarget(), { _, _, _ in
-            DispatchQueue.main.async { Fixer.shared.run() }
+            DispatchQueue.main.async {
+                if AXIsProcessTrusted() { Fixer.shared.run() }
+                else { (NSApp.delegate as? AppDelegate)?.showWindow() }
+            }
             return noErr
         }, 1, &spec, nil, nil)
         let id = EventHotKeyID(signature: OSType(0x54484658), id: 1) // 'THFX'
