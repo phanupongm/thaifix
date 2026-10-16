@@ -1,5 +1,7 @@
 name: build-mac
 on: [push, workflow_dispatch]
+permissions:
+  contents: write
 jobs:
   build:
     runs-on: macos-14
@@ -41,3 +43,11 @@ jobs:
         with:
           name: ThaiFix
           path: ThaiFix.zip
+      - name: Publish release
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG=v0.1.${{ github.run_number }}
+          gh release create "$TAG" ThaiFix.zip --title "ThaiFix $TAG" --notes "ดาวน์โหลด ThaiFix.zip → แตกไฟล์ → ลาก ThaiFix.app ไปไว้ใน Applications  
+          Download ThaiFix.zip, unzip, and drag ThaiFix.app into Applications." --latest

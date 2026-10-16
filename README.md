@@ -31,13 +31,15 @@ Changed your mind? Press **⌘Z** to undo.
 
 ## Install
 
-1. Open the latest successful run under [**Actions**](../../actions) and download **ThaiFix** from *Artifacts*.
+1. **[⬇ Download ThaiFix.zip](https://github.com/phanupongm/thaifix/releases/latest/download/ThaiFix.zip)** (latest release, Apple Silicon + Intel).
 2. Unzip it and drag **ThaiFix.app** into **Applications**.
 3. Open it. If macOS blocks it, go to **System Settings → Privacy & Security** and click **Open Anyway**.
    If it says the app is *damaged*, run: `xattr -cr /Applications/ThaiFix.app`
 4. Allow **Accessibility** access when asked (**System Settings → Privacy & Security → Accessibility → ThaiFix**), then quit and reopen the app.
 
-You'll see the ThaiFix key icon in the menu bar. There is no window — that's normal.
+A small ThaiFix window shows whether everything is ready. You can close it — the app keeps running, with a key icon in the menu bar. Double-click ThaiFix in Applications anytime to bring the window back.
+
+> **Can't see the menu-bar icon?** On MacBooks with a notch it may be hidden behind the camera when the menu bar is crowded. On macOS 26, also check **System Settings → Menu Bar** and make sure ThaiFix is allowed. The shortcut works either way.
 
 > **Updating:** after replacing the app, remove ThaiFix from the Accessibility list and add it again — macOS treats each new build as a different app.
 
@@ -89,6 +91,6 @@ Every push also builds a universal (Apple Silicon + Intel) app on GitHub Actions
 - ไม่ต้องใช้อินเทอร์เน็ต ข้อความที่พิมพ์ไม่ถูกส่งออกจากเครื่อง
 - ถ้าแปลงผิด กด Command + Z เพื่อย้อนกลับ
 
-**ติดตั้ง:** ดาวน์โหลดจากหน้า [Actions](../../actions) → เลือกรอบล่าสุด → Artifacts → ThaiFix แล้วลากไฟล์ไปไว้ในโฟลเดอร์ Applications จากนั้นเปิดสิทธิ์ Accessibility ให้แอป (ดูรายละเอียดในหัวข้อ Install ด้านบน)
+**ติดตั้ง:** [⬇ ดาวน์โหลด ThaiFix.zip](https://github.com/phanupongm/thaifix/releases/latest/download/ThaiFix.zip) → แตกไฟล์ → ลาก ThaiFix.app ไปไว้ในโฟลเดอร์ Applications จากนั้นเปิดสิทธิ์ Accessibility ให้แอป (ดูรายละเอียดในหัวข้อ Install ด้านบน)
 
 เจอคำที่แปลงผิด หรือคำที่ไม่ควรถูกแปลง? [เปิด issue](../../issues) บอกได้เลย

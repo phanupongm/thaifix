@@ -288,9 +288,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         let menu = NSMenu()
         menu.addItem(withTitle: "แก้ข้อความที่พิมพ์ผิดภาษา  ⌥⌘L", action: #selector(fixNow), keyEquivalent: "")
+        menu.addItem(withTitle: "เปิดหน้าต่าง ThaiFix", action: #selector(showWindow), keyEquivalent: "")
         menu.addItem(.separator())
         menu.addItem(withTitle: "ออก", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
-        for item in menu.items where item.action == #selector(fixNow) { item.target = self }
+        for item in menu.items where item.action != #selector(NSApplication.terminate(_:)) { item.target = self }
         statusItem.menu = menu
 
         // ขอสิทธิ์ Accessibility (จำเป็นสำหรับการจำลองปุ่ม copy/paste)
@@ -306,9 +307,76 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let id = EventHotKeyID(signature: OSType(0x54484658), id: 1) // 'THFX'
         RegisterEventHotKey(UInt32(kVK_ANSI_L), UInt32(cmdKey | optionKey), id,
                             GetApplicationEventTarget(), 0, &hotKeyRef)
+
+        showWindow()
+        // อัปเดตสถานะสิทธิ์ในหน้าต่างทุก 1 วินาที (หลังผู้ใช้ไปเปิดสวิตช์ใน System Settings)
+        Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in self.refreshStatus() }
+    }
+
+    // เปิดแอปซ้ำ (ดับเบิลคลิกตอนที่ทำงานอยู่แล้ว) → โชว์หน้าต่าง
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        showWindow(); return true
     }
 
     @objc func fixNow() { Fixer.shared.run() }
+
+    // MARK: หน้าต่างสถานะ
+    var window: NSWindow?
+    let statusLabel = NSTextField(labelWithString: "")
+    let permButton = NSButton(title: "เปิดการตั้งค่า Accessibility", target: nil, action: nil)
+
+    func refreshStatus() {
+        let ok = AXIsProcessTrusted()
+        statusLabel.stringValue = ok ? "✅  พร้อมใช้งาน — ThaiFix ทำงานอยู่เบื้องหลัง"
+                                     : "⚠️  ยังไม่ได้รับสิทธิ์ Accessibility — คีย์ลัดจะยังไม่ทำงาน"
+        statusLabel.textColor = ok ? .systemGreen : .systemOrange
+        permButton.isHidden = ok
+    }
+
+    @objc func openAXSettings() {
+        NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!)
+    }
+
+    @objc func showWindow() {
+        if window == nil {
+            let w = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 440, height: 300),
+                             styleMask: [.titled, .closable], backing: .buffered, defer: false)
+            w.title = "ThaiFix"
+            w.isReleasedWhenClosed = false
+
+            let icon = NSImageView(image: NSApp.applicationIconImage)
+            icon.widthAnchor.constraint(equalToConstant: 72).isActive = true
+            icon.heightAnchor.constraint(equalToConstant: 72).isActive = true
+
+            let title = NSTextField(labelWithString: "ThaiFix")
+            title.font = .systemFont(ofSize: 22, weight: .bold)
+
+            let how = NSTextField(wrappingLabelWithString:
+                "พิมพ์ผิดภาษาเมื่อไหร่ กด  ⌥ Option + ⌘ Command + L\n" +
+                "แอปจะแก้เฉพาะคำที่ผิด และสลับแป้นภาษาให้\n\n" +
+                "ปิดหน้าต่างนี้ได้เลย แอปยังทำงานต่อ\n" +
+                "เปิดหน้าต่างนี้อีกครั้ง: ดับเบิลคลิก ThaiFix ในโฟลเดอร์ Applications")
+            how.font = .systemFont(ofSize: 13)
+            how.alignment = .center
+
+            permButton.target = self; permButton.action = #selector(openAXSettings)
+            permButton.bezelStyle = .rounded
+            let quit = NSButton(title: "ปิดโปรแกรม ThaiFix", target: NSApp, action: #selector(NSApplication.terminate(_:)))
+            quit.bezelStyle = .rounded
+
+            let stack = NSStackView(views: [icon, title, statusLabel, how, permButton, quit])
+            stack.orientation = .vertical
+            stack.alignment = .centerX
+            stack.spacing = 10
+            stack.edgeInsets = NSEdgeInsets(top: 20, left: 24, bottom: 20, right: 24)
+            w.contentView = stack
+            window = w
+        }
+        refreshStatus()
+        window?.center()
+        NSApp.activate(ignoringOtherApps: true)
+        window?.makeKeyAndOrderFront(nil)
+    }
 }
 
 if CommandLine.arguments.contains("--test") {
