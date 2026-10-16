@@ -1,0 +1,34 @@
+name: build-mac
+on: [push, workflow_dispatch]
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build universal app
+        run: |
+          set -e
+          APP=ThaiFix.app
+          mkdir -p $APP/Contents/MacOS
+          swiftc -O main.swift -target arm64-apple-macos11 -o thaifix-arm -framework Cocoa -framework Carbon
+          swiftc -O main.swift -target x86_64-apple-macos11 -o thaifix-x86 -framework Cocoa -framework Carbon
+          lipo -create thaifix-arm thaifix-x86 -output $APP/Contents/MacOS/ThaiFix
+          cat > $APP/Contents/Info.plist <<'PLIST'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+            <key>CFBundleName</key><string>ThaiFix</string>
+            <key>CFBundleIdentifier</key><string>com.thaifix.app</string>
+            <key>CFBundleExecutable</key><string>ThaiFix</string>
+            <key>CFBundlePackageType</key><string>APPL</string>
+            <key>CFBundleShortVersionString</key><string>0.1</string>
+            <key>LSUIElement</key><true/>
+            <key>LSMinimumSystemVersion</key><string>11.0</string>
+          </dict></plist>
+          PLIST
+          codesign --force --deep --sign - $APP
+          ditto -c -k --keepParent $APP ThaiFix.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ThaiFix
+          path: ThaiFix.zip
