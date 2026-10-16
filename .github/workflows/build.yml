@@ -16,6 +16,7 @@ jobs:
               exit 1
             fi
           done
+          ./thaifix-arm64 --test | while read -r l; do echo "::notice::$l"; done
           mv thaifix-arm64 thaifix-arm; mv thaifix-x86_64 thaifix-x86
           lipo -create thaifix-arm thaifix-x86 -output $APP/Contents/MacOS/ThaiFix
           cat > $APP/Contents/Info.plist <<'PLIST'

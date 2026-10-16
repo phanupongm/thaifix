@@ -46,39 +46,116 @@ func convert(_ text: String) -> (String, Bool) {
     return (String(out), toThai)
 }
 
-/// ใช้ตอนไม่ได้เลือกข้อความ: หา "ช่วงท้ายบรรทัด" ที่เป็นภาษาเดียวกับคำสุดท้าย แล้วแปลงเฉพาะช่วงนั้น
-func convertTrailingRun(of line: String) -> (String, Bool)? {
-    // แยกเป็นโทเค็น โดยเก็บช่องว่างไว้ด้วย
+// MARK: - ตัดสินทีละคำ ว่าคำไหนพิมพ์ผิดภาษา
+
+/// คำอังกฤษ/ศัพท์เทคนิคที่ไม่ต้องแปลงแน่ ๆ (เพิ่มได้)
+let keepWords: Set<String> = [
+    "repo","git","api","app","ui","ux","url","pr","ok","okay","login","logout","email","wifi",
+    "line","fb","ig","dev","prod","config","json","css","html","js","ts","sql","db","npm","ai",
+    "admin","server","update","deploy","bug","fix","test","build","code","file","link","online",
+]
+
+let thaiConsonants = Set("กขฃคฅฆงจฉชซฌญฎฏฐฑฒณดตถทธนบปผฝพฟภมยรลวศษสหฬอฮ".unicodeScalars)
+let thaiLeadVowels = Set("เแโใไ".unicodeScalars)
+let thaiMarks = Set("ัิีึืฺุู็่้๊๋์ํ".unicodeScalars)   // ต้องตามหลังพยัญชนะ
+let thaiTones = Set("่้๊๋".unicodeScalars)
+let thaiNoStart = Set("ะาำๅฯๆ".unicodeScalars).union(thaiMarks)
+
+/// ข้อความไทยนี้ "เป็นไทยที่เป็นไปได้" ไหม (เช็กกฎการเขียนแบบหยาบ ๆ)
+func looksLikeValidThai(_ t: String) -> Bool {
+    let sc = Array(t.unicodeScalars).filter { isThai($0) }
+    guard let first = sc.first else { return false }
+    if thaiNoStart.contains(first) { return false }
+    if let last = sc.last, thaiLeadVowels.contains(last) { return false }
+    for i in 0..<sc.count {
+        let c = sc[i]
+        let prev: Unicode.Scalar? = i > 0 ? sc[i-1] : nil
+        if thaiMarks.contains(c) || c == "ำ" || c == "ะ" {
+            guard let p = prev, thaiConsonants.contains(p) || thaiMarks.contains(p) else { return false }
+            if thaiTones.contains(c) && thaiTones.contains(p) { return false }
+            if thaiMarks.contains(c) && c == p { return false }
+        }
+        if thaiLeadVowels.contains(c), i + 1 < sc.count, !thaiConsonants.contains(sc[i+1]) { return false }
+    }
+    // ข้อความไทยที่มีอักษรแปลก ๆ ปน (ไม่ใช่ไทย/ช่องว่าง) ถือว่าไม่น่าใช่
+    return t.unicodeScalars.allSatisfy { isThai($0) || " .,!?\"'()-".unicodeScalars.contains($0) }
+}
+
+func isEnglishWord(_ w: String) -> Bool {
+    let lower = w.lowercased()
+    if keepWords.contains(lower) { return true }
+    #if canImport(AppKit)
+    let r = NSSpellChecker.shared.checkSpelling(of: lower, startingAt: 0, language: "en",
+                                                wrap: false, inSpellDocumentWithTag: 0, wordCount: nil)
+    return r.location == NSNotFound
+    #else
+    return false
+    #endif
+}
+
+let mappedPunct = Set(";'[],./\\`-=".unicodeScalars)
+
+/// คำอังกฤษนี้จริง ๆ คือไทยที่ลืมสลับแป้นไหม
+func latinIsMistyped(_ tok: String) -> Bool {
+    if tok.contains("://") || tok.contains("@") || tok.contains("#") { return false }
+    let sc = Array(tok.unicodeScalars)
+    let thai = convert(tok).0
+    // มีเครื่องหมาย/ตัวเลขแทรกกลางตัวอักษร เช่น l;ylfu, [kwfh, 9yh'
+    let hasLetters = sc.contains { isLatinLetter($0) }
+    if hasLetters && sc.count >= 2 {
+        let inner = sc.dropFirst().dropLast()
+        let odd = inner.contains { mappedPunct.contains($0) || (0x30...0x39).contains($0.value) }
+            || (sc.first.map { "[;'`".unicodeScalars.contains($0) } ?? false)
+        if odd && looksLikeValidThai(thai) { return true }
+    }
+    // ตัดเครื่องหมายหัวท้ายแล้วเหลือแต่ตัวอักษร
+    let core = tok.trimmingCharacters(in: .punctuationCharacters)
+    guard !core.isEmpty, core.unicodeScalars.allSatisfy(isLatinLetter) else { return false }
+    if isEnglishWord(core) { return false }
+    // ชื่อเฉพาะ/ตัวพิมพ์ใหญ่ผสม (iPhone, GitHub) ปล่อยไว้
+    if core.dropFirst().contains(where: { $0.isUppercase }) && core.contains(where: { $0.isLowercase }) { return false }
+    return looksLikeValidThai(thai)
+}
+
+/// คำไทยนี้จริง ๆ คืออังกฤษที่ลืมสลับแป้นไหม
+func thaiIsMistyped(_ tok: String) -> Bool {
+    let eng = convert(tok).0
+    if !looksLikeValidThai(tok) { return true }
+    let core = eng.trimmingCharacters(in: .punctuationCharacters)
+    return core.count >= 3 && core.unicodeScalars.allSatisfy(isLatinLetter) && isEnglishWord(core)
+}
+
+func tokenize(_ line: String) -> [String] {
     var tokens: [String] = []
     var cur = ""
     var curIsSpace: Bool? = nil
     for ch in line {
-        let sp = ch == " " || ch == "\t"
-        if curIsSpace != nil && sp != curIsSpace! { tokens.append(cur); cur = "" }
+        let sp = ch == " " || ch == "\t" || ch == "\n"
+        if let c = curIsSpace, c != sp { tokens.append(cur); cur = "" }
         cur.append(ch); curIsSpace = sp
     }
     if !cur.isEmpty { tokens.append(cur) }
+    return tokens
+}
 
-    var target: Script? = nil
-    var start = tokens.count
-    var i = tokens.count - 1
-    while i >= 0 {
-        let tok = tokens[i]
-        let sc = tok.trimmingCharacters(in: .whitespaces).isEmpty ? Script.neutral : script(of: tok)
-        if sc != .neutral {
-            if target == nil { target = sc }
-            else if sc != target { break }
+/// แก้เฉพาะคำที่พิมพ์ผิดภาษา คืนค่า (ข้อความใหม่, ภาษาที่ควรสลับไป: true=ไทย) หรือ nil ถ้าไม่มีอะไรต้องแก้
+func smartFix(_ text: String) -> (String, Bool)? {
+    var changed = false
+    var lastLang: Bool? = nil
+    let out = tokenize(text).map { tok -> String in
+        switch script(of: tok) {
+        case .latin:
+            if latinIsMistyped(tok) { changed = true; lastLang = true; return convert(tok).0 }
+            lastLang = false
+        case .thai:
+            if thaiIsMistyped(tok) { changed = true; lastLang = false; return convert(tok).0 }
+            lastLang = true
+        case .neutral: break
         }
-        start = i
-        i -= 1
-    }
-    guard target != nil else { return nil }
-    // ไม่เอาโทเค็นกลาง ๆ (ช่องว่าง/ตัวเลข) ที่หัวช่วง
-    while start < tokens.count, script(of: tokens[start]) == .neutral { start += 1 }
-    let prefix = tokens[..<start].joined()
-    let suffix = tokens[start...].joined()
-    let (conv, toThai) = convert(suffix)
-    return (prefix + conv, toThai)
+        return tok
+    }.joined()
+    guard changed, let lang = lastLang else { return nil }
+    return (out, lang)
 }
 
 // MARK: - คีย์บอร์ด / คลิปบอร์ด
@@ -158,8 +235,9 @@ final class Fixer {
         postKey(kVK_ANSI_C, .maskCommand)                       // copy ส่วนที่เลือก
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
-            if pb.changeCount != before, let sel = pb.string(forType: .string), !sel.isEmpty {
-                let (out, toThai) = convert(sel)
+            if pb.changeCount != before, let sel = pb.string(forType: .string), !sel.isEmpty,
+               !sel.hasSuffix("\n") {   // บางแอป (VS Code) ⌘C ตอนไม่ได้เลือก = copy ทั้งบรรทัด
+                let (out, toThai) = smartFix(sel) ?? convert(sel)
                 self.paste(out, toThai: toThai, saved: saved)
             } else {
                 // ไม่ได้เลือกอะไร → เลือกจากเคอร์เซอร์ไปต้นบรรทัด
@@ -170,7 +248,7 @@ final class Fixer {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
                         guard pb.changeCount != before2,
                               let line = pb.string(forType: .string),
-                              let result = convertTrailingRun(of: line) else {
+                              let result = smartFix(line) else {
                             postKey(kVK_RightArrow, [])           // ยกเลิกการเลือก
                             restorePasteboard(saved); self.busy = false; return
                         }
@@ -226,6 +304,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc func fixNow() { Fixer.shared.run() }
+}
+
+if CommandLine.arguments.contains("--test") {
+    for t in ["l;ylfu", "อัพเดท repo มาให้หน่อย", "อัพเดท repo ทาให้หน่อย", "ำสำ", "นัดกัน l;ylfu",
+              "hello world", "้ำสสน ไนพสก", "เปิด GitHub แล้ว push code", "ช่วย fix bug หน่อย", "iPhone ใหม่"] {
+        print("TEST: \(t) => \(smartFix(t).map { $0.0 } ?? "(ไม่แก้)")")
+    }
+    exit(0)
 }
 
 let app = NSApplication.shared
