@@ -280,7 +280,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ n: Notification) {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        statusItem.button?.title = "ก/A"
+        if let img = Bundle.main.image(forResource: "MenuIcon") {
+            img.isTemplate = true            // ให้เปลี่ยนสีตามโหมดมืด/สว่างเอง
+            statusItem.button?.image = img
+        } else {
+            statusItem.button?.title = "ก/A"
+        }
         let menu = NSMenu()
         menu.addItem(withTitle: "แก้ข้อความที่พิมพ์ผิดภาษา  ⌥⌘L", action: #selector(fixNow), keyEquivalent: "")
         menu.addItem(.separator())

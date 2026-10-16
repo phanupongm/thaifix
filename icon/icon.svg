@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2B3A8F"/><stop offset="1" stop-color="#141B4D"/>
+    </linearGradient>
+    <linearGradient id="cap" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E6E9F5"/>
+    </linearGradient>
+    <filter id="sh" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="18" stdDeviation="22" flood-color="#000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="url(#bg)"/>
+  <!-- keycap -->
+  <rect x="222" y="238" width="580" height="580" rx="96" fill="#B9C0DD" filter="url(#sh)"/>
+  <rect x="222" y="214" width="580" height="568" rx="96" fill="url(#cap)"/>
+  <!-- glyphs -->
+  <text x="340" y="470" font-family="Inter" font-weight="800" font-size="230" fill="#1B2563" text-anchor="middle">A</text>
+  <text x="680" y="720" font-family="Noto Sans Thai" font-weight="800" font-size="250" fill="#FF6B4A" text-anchor="middle">ก</text>
+  <!-- swap arrows -->
+  <g fill="none" stroke-width="30" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M470 330 Q640 330 660 470" stroke="#1B2563"/>
+    <path d="M622 452 L660 494 L700 452" stroke="#1B2563"/>
+    <path d="M550 690 Q380 690 362 552" stroke="#FF6B4A"/>
+    <path d="M322 574 L362 530 L402 574" stroke="#FF6B4A"/>
+  </g>
+</svg>

@@ -18,6 +18,8 @@ jobs:
           done
           ./thaifix-arm64 --test | while read -r l; do echo "::notice::$l"; done
           mv thaifix-arm64 thaifix-arm; mv thaifix-x86_64 thaifix-x86
+          mkdir -p $APP/Contents/Resources
+          cp icon/AppIcon.icns icon/MenuIcon.png icon/MenuIcon@2x.png $APP/Contents/Resources/
           lipo -create thaifix-arm thaifix-x86 -output $APP/Contents/MacOS/ThaiFix
           cat > $APP/Contents/Info.plist <<'PLIST'
           <?xml version="1.0" encoding="UTF-8"?>
@@ -26,6 +28,7 @@ jobs:
             <key>CFBundleName</key><string>ThaiFix</string>
             <key>CFBundleIdentifier</key><string>com.thaifix.app</string>
             <key>CFBundleExecutable</key><string>ThaiFix</string>
+            <key>CFBundleIconFile</key><string>AppIcon</string>
             <key>CFBundlePackageType</key><string>APPL</string>
             <key>CFBundleShortVersionString</key><string>0.1</string>
             <key>LSUIElement</key><true/>
