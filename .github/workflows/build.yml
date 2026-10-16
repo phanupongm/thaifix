@@ -10,8 +10,13 @@ jobs:
           set -e
           APP=ThaiFix.app
           mkdir -p $APP/Contents/MacOS
-          swiftc -O main.swift -target arm64-apple-macos11 -o thaifix-arm -framework Cocoa -framework Carbon
-          swiftc -O main.swift -target x86_64-apple-macos11 -o thaifix-x86 -framework Cocoa -framework Carbon
+          for a in arm64 x86_64; do
+            if ! swiftc -O main.swift -target $a-apple-macos11 -o thaifix-$a -framework Cocoa -framework Carbon > log.txt 2>&1; then
+              grep -E "error:" log.txt | head -20 | while read -r l; do echo "::error::$l"; done
+              exit 1
+            fi
+          done
+          mv thaifix-arm64 thaifix-arm; mv thaifix-x86_64 thaifix-x86
           lipo -create thaifix-arm thaifix-x86 -output $APP/Contents/MacOS/ThaiFix
           cat > $APP/Contents/Info.plist <<'PLIST'
           <?xml version="1.0" encoding="UTF-8"?>

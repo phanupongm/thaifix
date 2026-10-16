@@ -170,11 +170,11 @@ final class Fixer {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
                         guard pb.changeCount != before2,
                               let line = pb.string(forType: .string),
-                              let (out, toThai) = convertTrailingRun(of: line) else {
+                              let result = convertTrailingRun(of: line) else {
                             postKey(kVK_RightArrow, [])           // ยกเลิกการเลือก
                             restorePasteboard(saved); self.busy = false; return
                         }
-                        self.paste(out, toThai: toThai, saved: saved)
+                        self.paste(result.0, toThai: result.1, saved: saved)
                     }
                 }
             }
