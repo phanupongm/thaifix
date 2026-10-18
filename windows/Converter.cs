@@ -163,6 +163,20 @@ namespace ThaiFix
             return core.Length >= 3 && core.All(IsLatin) && IsEnglishWord(core);
         }
 
+        /// คำไทยที่ส่วนท้ายพิมพ์ผิดติดกัน เช่น "เสียงในำสำอำืสฟิ" → แบ่งเป็น "เสียงใน" + "ำสำอำืสฟิ"
+        static bool SplitThaiTail(string tok, out string prefix, out string suffix)
+        {
+            prefix = suffix = null;
+            for (int k = 1; k < tok.Length; k++)
+            {
+                string p = tok.Substring(0, k), q = tok.Substring(k);
+                if (!LooksLikeValidThai(p) || LooksLikeValidThai(q)) continue;
+                string eng = TrimPunct(Conv(q));
+                if (eng.Length >= 2 && eng.All(IsLatin)) { prefix = p; suffix = q; return true; }
+            }
+            return false;
+        }
+
         static List<string> Tokenize(string line)
         {
             var tokens = new List<string>();
@@ -194,7 +208,13 @@ namespace ThaiFix
                 }
                 else if (s == Script.Thai)
                 {
-                    if (ThaiIsMistyped(tok)) { changed = true; lastLang = false; outTokens.Add(Conv(tok)); continue; }
+                    if (ThaiIsMistyped(tok))
+                    {
+                        changed = true; lastLang = false;
+                        string p, q;
+                        outTokens.Add(SplitThaiTail(tok, out p, out q) ? p + Conv(q) : Conv(tok));
+                        continue;
+                    }
                     lastLang = true;
                 }
                 outTokens.Add(tok);

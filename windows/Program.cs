@@ -231,7 +231,8 @@ namespace ThaiFix
             if (args.Length >= 2 && args[0] == "--test")
             {
                 var cases = new[] { "l;ylfu", "อัพเดท repo มาให้หน่อย", "ำสำ", "นัดกัน l;ylfu", "hello world",
-                                    "้ำสสน ไนพสก", "เปิด GitHub แล้ว push code", "ช่วย fix bug หน่อย", "iPhone ใหม่" };
+                                    "้ำสสน ไนพสก", "เปิด GitHub แล้ว push code", "ช่วย fix bug หน่อย", "iPhone ใหม่",
+                                    "ช่วยออกแบบ charector เสียงในำสำอำืสฟิ", "ช่วยออกแบบ charector เสียงใน ำสำอำืสฟิ" };
                 var lines = new List<string>();
                 foreach (var t in cases)
                 {

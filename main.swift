@@ -125,6 +125,22 @@ func thaiIsMistyped(_ tok: String) -> Bool {
     return core.count >= 3 && core.unicodeScalars.allSatisfy(isLatinLetter) && isEnglishWord(core)
 }
 
+/// คำไทยที่ส่วนท้ายพิมพ์ผิดติดกันโดยไม่มีช่องว่าง เช่น "เสียงในำสำอำืสฟิ" → ("เสียงใน", "ำสำอำืสฟิ")
+/// หาจุดแบ่งที่ส่วนหน้าเป็นไทยที่ถูก ส่วนท้ายเป็นไทยที่ผิด และแปลงแล้วได้ตัวอักษรอังกฤษล้วน (เอาส่วนท้ายที่ยาวที่สุด)
+func splitThaiTail(_ tok: String) -> (String, String)? {
+    let sc = Array(tok.unicodeScalars)
+    guard sc.count >= 2 else { return nil }
+    for k in 1..<sc.count {
+        var p = String.UnicodeScalarView(); p.append(contentsOf: sc[..<k])
+        var q = String.UnicodeScalarView(); q.append(contentsOf: sc[k...])
+        let prefix = String(p), suffix = String(q)
+        guard looksLikeValidThai(prefix), !looksLikeValidThai(suffix) else { continue }
+        let eng = convert(suffix).0.trimmingCharacters(in: .punctuationCharacters)
+        if eng.count >= 2 && eng.unicodeScalars.allSatisfy(isLatinLetter) { return (prefix, suffix) }
+    }
+    return nil
+}
+
 func tokenize(_ line: String) -> [String] {
     var tokens: [String] = []
     var cur = ""
@@ -148,7 +164,11 @@ func smartFix(_ text: String) -> (String, Bool)? {
             if latinIsMistyped(tok) { changed = true; lastLang = true; return convert(tok).0 }
             lastLang = false
         case .thai:
-            if thaiIsMistyped(tok) { changed = true; lastLang = false; return convert(tok).0 }
+            if thaiIsMistyped(tok) {
+                changed = true; lastLang = false
+                if let (p, q) = splitThaiTail(tok) { return p + convert(q).0 }
+                return convert(tok).0
+            }
             lastLang = true
         case .neutral: break
         }
@@ -393,7 +413,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
 if CommandLine.arguments.contains("--test") {
     for t in ["l;ylfu", "อัพเดท repo มาให้หน่อย", "อัพเดท repo ทาให้หน่อย", "ำสำ", "นัดกัน l;ylfu",
-              "hello world", "้ำสสน ไนพสก", "เปิด GitHub แล้ว push code", "ช่วย fix bug หน่อย", "iPhone ใหม่"] {
+              "hello world", "้ำสสน ไนพสก", "เปิด GitHub แล้ว push code", "ช่วย fix bug หน่อย", "iPhone ใหม่",
+              "ช่วยออกแบบ charector เสียงในำสำอำืสฟิ", "ช่วยออกแบบ charector เสียงใน ำสำอำืสฟิ"] {
         print("TEST: \(t) => \(smartFix(t).map { $0.0 } ?? "(ไม่แก้)")")
     }
     exit(0)
