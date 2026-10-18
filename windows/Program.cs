@@ -179,7 +179,7 @@ namespace ThaiFix
                 await Task.Delay(120);
 
                 string sel = Native.GetClipboardSequenceNumber() != seq ? ReadClipboardText() : null;
-                string result; bool toThai;
+                string result; bool toThai = false;
 
                 // บางแอป (VS Code) Ctrl+C ตอนไม่ได้เลือก = copy ทั้งบรรทัดพร้อม \n → ถือว่าไม่ได้เลือก
                 if (!string.IsNullOrEmpty(sel) && !sel.EndsWith("\n"))
