@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>ThaiFix</AssemblyName>
+    <RootNamespace>ThaiFix</RootNamespace>
+    <ApplicationIcon>ThaiFix.ico</ApplicationIcon>
+    <Version>0.1.0</Version>
+    <Product>ThaiFix</Product>
+    <Description>Fix text typed in the wrong keyboard layout (Thai/English)</Description>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="words.txt.gz" />
+  </ItemGroup>
+</Project>

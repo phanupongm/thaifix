@@ -43,11 +43,40 @@ jobs:
         with:
           name: ThaiFix
           path: ThaiFix.zip
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build
+        shell: pwsh
+        run: |
+          dotnet build windows/ThaiFix.csproj -c Release -o out 2>&1 | Tee-Object build.log
+          if ($LASTEXITCODE -ne 0) {
+            Select-String -Path build.log -Pattern "error" | Select-Object -First 20 | ForEach-Object { Write-Output "::error::$($_.Line)" }
+            exit 1
+          }
+          .\out\ThaiFix.exe --test test.txt
+          Start-Sleep -Seconds 2
+          Get-Content test.txt -Encoding UTF8 | ForEach-Object { Write-Output "::notice::WIN $_" }
+          Copy-Item out\ThaiFix.exe ThaiFix.exe
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ThaiFix-Windows
+          path: ThaiFix.exe
+
+  release:
+    needs: [build, windows]
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
       - name: Publish release
         if: github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           TAG=v0.1.${{ github.run_number }}
-          gh release create "$TAG" ThaiFix.zip --title "ThaiFix $TAG" --notes "ดาวน์โหลด ThaiFix.zip → แตกไฟล์ → ลาก ThaiFix.app ไปไว้ใน Applications  
+          gh release create "$TAG" ThaiFix.zip ThaiFix.exe -R ${{ github.repository }} --title "ThaiFix $TAG" --notes "Mac: ThaiFix.zip → แตกไฟล์ → ลาก ThaiFix.app ไปไว้ใน Applications · Windows: ThaiFix.exe → ดับเบิลคลิก  
           Download ThaiFix.zip, unzip, and drag ThaiFix.app into Applications." --latest
