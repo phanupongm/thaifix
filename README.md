@@ -17,7 +17,7 @@
 
 ## What it does
 
-ThaiFix is a tiny macOS menu-bar app. When you forget to switch between the Thai and English keyboard and end up with gibberish, press **⌥⌘L** (Option + Command + L):
+ThaiFix is a tiny app for **macOS and Windows**. When you forget to switch between the Thai and English keyboard and end up with gibberish, press **⌥⌘L** (Option + Command + L) on Mac or **Ctrl + Alt + L** on Windows:
 
 - **Fixes only the wrong words.** Correct words in a mixed line are left alone —
   `อัพเดท repo มาให้หน่อย` stays exactly as typed, while `นัดกัน l;ylfu` becomes `นัดกัน สวัสดี`.
@@ -29,7 +29,13 @@ ThaiFix is a tiny macOS menu-bar app. When you forget to switch between the Thai
 
 Changed your mind? Press **⌘Z** to undo.
 
-## Install
+## Install on Windows
+
+1. **[⬇ Download ThaiFix.exe](https://github.com/phanupongm/thaifix/releases/latest/download/ThaiFix.exe)** (Windows 10/11, no install needed).
+2. Double-click it. If Windows SmartScreen shows *"Windows protected your PC"*, click **More info → Run anyway** (the app isn't code-signed yet).
+3. ThaiFix lives in the system tray (bottom-right, maybe under the **^** arrow). Right-click it to turn on **start with Windows**.
+
+## Install on Mac
 
 1. **[⬇ Download ThaiFix.zip](https://github.com/phanupongm/thaifix/releases/latest/download/ThaiFix.zip)** (latest release, Apple Silicon + Intel).
 2. Unzip it and drag **ThaiFix.app** into **Applications**.
@@ -60,7 +66,9 @@ To fix text, ThaiFix simulates **⌘C**, converts the text, and simulates **⌘V
 
 ## Build from source
 
-Requires Xcode Command Line Tools (`xcode-select --install`).
+**Windows:** `dotnet build windows/ThaiFix.csproj -c Release` (.NET SDK; the app targets .NET Framework 4.8, built into Windows 10/11).
+
+**Mac:** Requires Xcode Command Line Tools (`xcode-select --install`).
 
 ```bash
 bash build.sh
@@ -76,21 +84,28 @@ Every push also builds a universal (Apple Silicon + Intel) app on GitHub Actions
 - [ ] Pattachote layout
 - [ ] More languages (Russian, Hebrew, Arabic, Greek, Korean…)
 - [ ] Signed & notarized release
-- [ ] Windows version
+- [x] Windows version
+- [ ] Code-signed Windows build
 
 ---
 
 ## ภาษาไทย
 
-**ThaiFix** คือแอปเล็ก ๆ บนแถบเมนูของ Mac สำหรับแก้ข้อความที่พิมพ์ผิดภาษาเพราะลืมสลับแป้น ไทย/อังกฤษ
+**ThaiFix** คือแอปเล็ก ๆ สำหรับ Mac และ Windows สำหรับแก้ข้อความที่พิมพ์ผิดภาษาเพราะลืมสลับแป้น ไทย/อังกฤษ
 
-**วิธีใช้:** พิมพ์ไปตามปกติ ถ้าเผลอพิมพ์ผิดภาษา ให้กด **Option + Command + L**
+**วิธีใช้:** พิมพ์ไปตามปกติ ถ้าเผลอพิมพ์ผิดภาษา ให้กด **Option + Command + L** (Mac) หรือ **Ctrl + Alt + L** (Windows)
 - แอปจะแก้เฉพาะคำที่ผิด คำอังกฤษที่ถูกอยู่แล้ว เช่น repo, update, GitHub จะไม่ถูกแตะ
 - ถ้าลากเลือกข้อความไว้ จะแปลงเฉพาะส่วนที่เลือก
 - แปลงเสร็จแล้วสลับแป้นภาษาให้ด้วย
 - ไม่ต้องใช้อินเทอร์เน็ต ข้อความที่พิมพ์ไม่ถูกส่งออกจากเครื่อง
 - ถ้าแปลงผิด กด Command + Z เพื่อย้อนกลับ
 
-**ติดตั้ง:** [⬇ ดาวน์โหลด ThaiFix.zip](https://github.com/phanupongm/thaifix/releases/latest/download/ThaiFix.zip) → แตกไฟล์ → ลาก ThaiFix.app ไปไว้ในโฟลเดอร์ Applications จากนั้นเปิดสิทธิ์ Accessibility ให้แอป (ดูรายละเอียดในหัวข้อ Install ด้านบน)
+**Windows:** [⬇ ดาวน์โหลด ThaiFix.exe](https://github.com/phanupongm/thaifix/releases/latest/download/ThaiFix.exe) → ดับเบิลคลิก ถ้าขึ้นหน้าจอสีฟ้า "Windows protected your PC" ให้กด More info → Run anyway
+
+**Mac:** [⬇ ดาวน์โหลด ThaiFix.zip](https://github.com/phanupongm/thaifix/releases/latest/download/ThaiFix.zip) → แตกไฟล์ → ลาก ThaiFix.app ไปไว้ในโฟลเดอร์ Applications จากนั้นเปิดสิทธิ์ Accessibility ให้แอป (ดูรายละเอียดในหัวข้อ Install ด้านบน)
 
 เจอคำที่แปลงผิด หรือคำที่ไม่ควรถูกแปลง? [เปิด issue](../../issues) บอกได้เลย
+
+---
+
+English word list from [word-list](https://github.com/sindresorhus/word-list) by Sindre Sorhus (MIT).
