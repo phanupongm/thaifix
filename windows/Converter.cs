@@ -171,7 +171,7 @@ namespace ThaiFix
             {
                 string p = tok.Substring(0, k), q = tok.Substring(k);
                 if (!LooksLikeValidThai(p) || LooksLikeValidThai(q)) continue;
-                string eng = TrimPunct(Conv(q));
+                string eng = Conv(q).TrimEnd(".,!?;:'\"()".ToCharArray());   // ตัดเฉพาะท้าย
                 if (eng.Length >= 2 && eng.All(IsLatin)) { prefix = p; suffix = q; return true; }
             }
             return false;

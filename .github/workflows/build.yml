@@ -18,7 +18,7 @@ jobs:
               exit 1
             fi
           done
-          ./thaifix-arm64 --test | while read -r l; do echo "::notice::$l"; done
+          echo "::notice::MAC $(./thaifix-arm64 --test | tr '\n' '|')"
           mv thaifix-arm64 thaifix-arm; mv thaifix-x86_64 thaifix-x86
           mkdir -p $APP/Contents/Resources
           cp icon/AppIcon.icns icon/MenuIcon.png icon/MenuIcon@2x.png $APP/Contents/Resources/
@@ -57,7 +57,7 @@ jobs:
           }
           .\out\ThaiFix.exe --test test.txt
           Start-Sleep -Seconds 2
-          Get-Content test.txt -Encoding UTF8 | ForEach-Object { Write-Output "::notice::WIN $_" }
+          Write-Output ("::notice::WIN " + ((Get-Content test.txt -Encoding UTF8) -join " | "))
           Copy-Item out\ThaiFix.exe ThaiFix.exe
       - uses: actions/upload-artifact@v4
         with:

@@ -135,7 +135,8 @@ func splitThaiTail(_ tok: String) -> (String, String)? {
         var q = String.UnicodeScalarView(); q.append(contentsOf: sc[k...])
         let prefix = String(p), suffix = String(q)
         guard looksLikeValidThai(prefix), !looksLikeValidThai(suffix) else { continue }
-        let eng = convert(suffix).0.trimmingCharacters(in: .punctuationCharacters)
+        var eng = convert(suffix).0     // ห้ามตัดเครื่องหมายด้านหน้า (ไม่งั้น "งใน..." → "'.o..." จะผ่าน)
+        while let l = eng.last, l.isPunctuation { eng.removeLast() }
         if eng.count >= 2 && eng.unicodeScalars.allSatisfy(isLatinLetter) { return (prefix, suffix) }
     }
     return nil
