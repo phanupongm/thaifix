@@ -14,5 +14,6 @@
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="words.txt.gz" />
+    <EmbeddedResource Include="thai.txt.gz" />
   </ItemGroup>
 </Project>

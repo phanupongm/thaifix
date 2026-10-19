@@ -19,12 +19,18 @@ jobs:
             fi
           done
           echo "::notice::MAC $(./thaifix-arm64 --test | tr '\n' '|')"
-          python3 tests/gen.py
+          mkdir -p data && gunzip -c windows/words.txt.gz > data/words.txt && gunzip -c windows/thai.txt.gz > data/thai.txt
+          python3 tests/gen.py && python3 tests/gen.py holdout.txt
+          export THAIFIX_DATA=$PWD/data
           ./thaifix-arm64 --eval tests/inputs.txt tests/out-mac.txt
+          ./thaifix-arm64 --eval tests/holdout-inputs.txt tests/out-mac-ho.txt
+          python3 tests/ref.py tests/inputs.txt tests/out-ref.txt
+          echo "::notice::PARITY mac-vs-ref differing lines: $(diff tests/out-mac.txt tests/out-ref.txt | grep -c '^<') $(diff tests/out-mac.txt tests/out-ref.txt | grep '^[<>]' | head -6 | tr '\n' '|')"
           python3 tests/score.py mac tests/out-mac.txt
+          python3 tests/score.py mac-holdout tests/out-mac-ho.txt holdout-cases.tsv
           mv thaifix-arm64 thaifix-arm; mv thaifix-x86_64 thaifix-x86
           mkdir -p $APP/Contents/Resources
-          cp icon/AppIcon.icns icon/MenuIcon.png icon/MenuIcon@2x.png $APP/Contents/Resources/
+          cp icon/AppIcon.icns icon/MenuIcon.png icon/MenuIcon@2x.png data/words.txt data/thai.txt $APP/Contents/Resources/
           lipo -create thaifix-arm thaifix-x86 -output $APP/Contents/MacOS/ThaiFix
           cat > $APP/Contents/Info.plist <<'PLIST'
           <?xml version="1.0" encoding="UTF-8"?>
@@ -62,8 +68,12 @@ jobs:
           Start-Sleep -Seconds 2
           Write-Output ("::notice::WIN " + ((Get-Content test.txt -Encoding UTF8) -join " | "))
           python tests/gen.py
+          python tests/gen.py holdout.txt
           Start-Process -Wait -FilePath .\out\ThaiFix.exe -ArgumentList "--eval","tests/inputs.txt","tests/out-win.txt"
+          Start-Process -Wait -FilePath .\out\ThaiFix.exe -ArgumentList "--eval","tests/holdout-inputs.txt","tests/out-win-ho.txt"
           python tests/score.py windows tests/out-win.txt
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          python tests/score.py windows-holdout tests/out-win-ho.txt holdout-cases.tsv
           if ($LASTEXITCODE -ne 0) { exit 1 }
           Copy-Item out\ThaiFix.exe ThaiFix.exe
       - uses: actions/upload-artifact@v4

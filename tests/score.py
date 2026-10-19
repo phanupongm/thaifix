@@ -16,7 +16,8 @@ NONE = "<NONE>"
 def main():
     sys.stdout.reconfigure(encoding="utf-8")
     platform, out_path = sys.argv[1], sys.argv[2]
-    cases = [l.rstrip("\n").split("\t") for l in open(os.path.join(HERE, "cases.tsv"), encoding="utf-8")]
+    cases_file = sys.argv[3] if len(sys.argv) > 3 else "cases.tsv"
+    cases = [l.rstrip("\n").split("\t") for l in open(os.path.join(HERE, cases_file), encoding="utf-8")]
     outs = [l.rstrip("\n").split("\t") for l in open(out_path, encoding="utf-8-sig")]
     if len(outs) != len(cases):
         print(f"::error::{platform}: got {len(outs)} outputs for {len(cases)} cases")
@@ -38,7 +39,7 @@ def main():
     fix_acc = 100.0 * fix_ok / max(fix_n, 1)
     fp_rate = 100.0 * (clean_n - clean_ok) / max(clean_n, 1)
 
-    th = json.load(open(os.path.join(HERE, "thresholds.json")))
+    th = json.load(open(os.path.join(HERE, "thresholds.json")))[cases_file]
     passed = fix_acc >= th["min_fix_accuracy"] and fp_rate <= th["max_false_positive"]
 
     lines = [f"## ThaiFix accuracy — {platform}", "",

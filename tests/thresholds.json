@@ -1,1 +1,4 @@
-{"min_fix_accuracy": 0, "max_false_positive": 100}
+{
+  "cases.tsv":         {"min_fix_accuracy": 97.0, "max_false_positive": 1.0},
+  "holdout-cases.tsv": {"min_fix_accuracy": 95.0, "max_false_positive": 2.0}
+}

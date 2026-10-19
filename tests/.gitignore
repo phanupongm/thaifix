@@ -1,4 +1,7 @@
 cases.tsv
 inputs.txt
+*-cases.tsv
+*-inputs.txt
 out-*.txt
 report-*.md
+__pycache__/

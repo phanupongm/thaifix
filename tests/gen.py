@@ -39,8 +39,10 @@ def script(w):
 
 
 def main():
+    src = sys.argv[1] if len(sys.argv) > 1 else "corpus.txt"
+    tag = "" if src == "corpus.txt" else os.path.splitext(src)[0] + "-"
     sents = []
-    with open(os.path.join(HERE, "corpus.txt"), encoding="utf-8") as f:
+    with open(os.path.join(HERE, src), encoding="utf-8") as f:
         for line in f:
             line = line.strip()
             if line and not line.startswith("#"):
@@ -76,11 +78,11 @@ def main():
                 if mm:
                     add("middle", " ".join(w[:mid] + [mm] + w[mid + 1:]), s)
 
-    out = os.path.join(HERE, "cases.tsv")
+    out = os.path.join(HERE, tag + "cases.tsv")
     with open(out, "w", encoding="utf-8", newline="\n") as f:
         for c in cases:
             f.write("\t".join(c) + "\n")
-    with open(os.path.join(HERE, "inputs.txt"), "w", encoding="utf-8", newline="\n") as f:
+    with open(os.path.join(HERE, tag + "inputs.txt"), "w", encoding="utf-8", newline="\n") as f:
         for c in cases:
             f.write(c[2] + "\n")
     kinds = {}
