@@ -51,14 +51,26 @@ A small ThaiFix window shows whether everything is ready. You can close it — t
 
 ## How it decides what to fix
 
-The Thai Kedmanee and US QWERTY layouts map one key to one character, so conversion is a simple lookup table — no AI or internet needed. For each word, ThaiFix checks:
+The Thai Kedmanee and US QWERTY layouts map one key to one character, so conversion itself is a lookup table — no AI or internet needed. The hard part is deciding *which* words to convert. For each word, ThaiFix checks:
 
 | Word looks like | Converted when |
 |---|---|
-| English letters | it isn't a real English word (macOS dictionary + a list of tech terms like *repo, git, api*) **and** the Thai equivalent is plausible Thai — or it has symbols inside the word like `l;ylfu` |
-| Thai letters | it breaks Thai spelling rules (e.g. starts with a vowel or tone mark, like `ำสำ`), or its English equivalent is a real word |
+| English letters | it isn't a real English word (bundled dictionary + tech/brand names like *repo, plugin, GitHub*) **and** the Thai it would become is real Thai (splits cleanly into Thai dictionary words) |
+| Thai letters | it breaks Thai spelling rules and isn't in the Thai dictionary (e.g. `ำสำ`), or its English equivalent is a real word |
+| Glued together | a correct word with a mistyped tail and no space, e.g. `loginsojvp` → `loginหน่อย`, `เสียงในำสำอำืสฟิ` → `เสียงในelevenlab` — only the tail is converted |
 
-Proper nouns with mixed case (`iPhone`, `GitHub`), URLs, emails and hashtags are never touched.
+URLs, emails and hashtags are never touched.
+
+## Accuracy
+
+Every build runs an automatic test suite on both Mac and Windows (`tests/`). It takes real Thai–English sentences, simulates forgetting to switch layouts in different places (last word, last two words, first word, middle word, glued without a space) and checks the result:
+
+| | Fix accuracy | Correct text wrongly changed |
+|---|---|---|
+| Main set (151 sentences, 855 cases) | **98.9%** | **0%** |
+| Held-out set (40 unseen sentences, 234 cases) | **97.4%** | **0%** |
+
+A build fails if accuracy drops below the thresholds in `tests/thresholds.json`. Add sentences to `tests/corpus.txt` to grow the suite. Known misses are short two-letter Thai words that are also English words (`me` = ทำ, `mu,` = ทีม).
 
 ## Why it needs Accessibility permission
 
@@ -75,7 +87,7 @@ bash build.sh
 open ThaiFix.app
 ```
 
-Every push also builds a universal (Apple Silicon + Intel) app on GitHub Actions and runs the conversion self-test (`ThaiFix --test`).
+Every push builds both apps on GitHub Actions and runs the accuracy suite. To tune the logic quickly without building, use the Python reference: `python3 tests/gen.py && python3 tests/ref.py tests/inputs.txt out.txt && python3 tests/score.py ref out.txt` — CI checks that the Mac app gives identical results.
 
 ## Roadmap
 
@@ -108,4 +120,4 @@ Every push also builds a universal (Apple Silicon + Intel) app on GitHub Actions
 
 ---
 
-English word list from [word-list](https://github.com/sindresorhus/word-list) by Sindre Sorhus (MIT).
+English word list from [word-list](https://github.com/sindresorhus/word-list) by Sindre Sorhus (MIT). Thai word and syllable lists from [PyThaiNLP](https://github.com/PyThaiNLP/pythainlp) (CC0).
