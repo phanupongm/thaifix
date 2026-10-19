@@ -227,6 +227,21 @@ namespace ThaiFix
         [STAThread]
         static void Main(string[] args)
         {
+            // โหมดวัดความแม่นยำ: ThaiFix.exe --eval inputs.txt outputs.txt (ใช้กับ tests/score.py)
+            if (args.Length >= 3 && args[0] == "--eval")
+            {
+                var outLines = new List<string>();
+                foreach (var l in File.ReadAllLines(args[1], new System.Text.UTF8Encoding(false)))
+                {
+                    bool th;
+                    string smart = Converter.SmartFix(l, out th);
+                    string final = smart ?? Converter.LastWordFix(l, out th);
+                    outLines.Add((smart ?? "<NONE>") + "\t" + (final ?? "<NONE>"));
+                }
+                File.WriteAllLines(args[2], outLines, new System.Text.UTF8Encoding(false));
+                return;
+            }
+
             // โหมดทดสอบสำหรับ CI: ThaiFix.exe --test out.txt
             if (args.Length >= 2 && args[0] == "--test")
             {

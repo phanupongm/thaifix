@@ -412,6 +412,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 }
 
+// โหมดวัดความแม่นยำ: ThaiFix --eval inputs.txt outputs.txt  (ใช้ใน CI ร่วมกับ tests/score.py)
+if let i = CommandLine.arguments.firstIndex(of: "--eval"), CommandLine.arguments.count > i + 2 {
+    let inPath = CommandLine.arguments[i + 1], outPath = CommandLine.arguments[i + 2]
+    let text = (try? String(contentsOfFile: inPath, encoding: .utf8)) ?? ""
+    var out = ""
+    for line in text.split(separator: "\n", omittingEmptySubsequences: false).dropLast() {
+        let l = String(line)
+        let smart = smartFix(l)
+        let final = smart ?? lastWordFix(l)
+        out += (smart?.0 ?? "<NONE>") + "\t" + (final?.0 ?? "<NONE>") + "\n"
+    }
+    try? out.write(toFile: outPath, atomically: true, encoding: .utf8)
+    exit(0)
+}
+
 if CommandLine.arguments.contains("--test") {
     for t in ["l;ylfu", "อัพเดท repo มาให้หน่อย", "อัพเดท repo ทาให้หน่อย", "ำสำ", "นัดกัน l;ylfu",
               "hello world", "้ำสสน ไนพสก", "เปิด GitHub แล้ว push code", "ช่วย fix bug หน่อย", "iPhone ใหม่",

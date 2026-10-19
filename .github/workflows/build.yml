@@ -19,6 +19,9 @@ jobs:
             fi
           done
           echo "::notice::MAC $(./thaifix-arm64 --test | tr '\n' '|')"
+          python3 tests/gen.py
+          ./thaifix-arm64 --eval tests/inputs.txt tests/out-mac.txt
+          python3 tests/score.py mac tests/out-mac.txt
           mv thaifix-arm64 thaifix-arm; mv thaifix-x86_64 thaifix-x86
           mkdir -p $APP/Contents/Resources
           cp icon/AppIcon.icns icon/MenuIcon.png icon/MenuIcon@2x.png $APP/Contents/Resources/
@@ -58,6 +61,10 @@ jobs:
           .\out\ThaiFix.exe --test test.txt
           Start-Sleep -Seconds 2
           Write-Output ("::notice::WIN " + ((Get-Content test.txt -Encoding UTF8) -join " | "))
+          python tests/gen.py
+          Start-Process -Wait -FilePath .\out\ThaiFix.exe -ArgumentList "--eval","tests/inputs.txt","tests/out-win.txt"
+          python tests/score.py windows tests/out-win.txt
+          if ($LASTEXITCODE -ne 0) { exit 1 }
           Copy-Item out\ThaiFix.exe ThaiFix.exe
       - uses: actions/upload-artifact@v4
         with:

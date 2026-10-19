@@ -1,0 +1,158 @@
+# ประโยคตัวอย่างที่คนไทยพิมพ์ปนอังกฤษ (หนึ่งบรรทัดต่อหนึ่งประโยค, บรรทัดที่ขึ้นต้นด้วย # ข้าม)
+# ใช้สร้างเคสทดสอบ "ลืมสลับภาษา" อัตโนมัติ — เพิ่มประโยคได้เรื่อย ๆ
+# งาน / โค้ด
+อัพเดท repo มาให้หน่อย
+ช่วย fix bug ตรงหน้า login หน่อย
+เดี๋ยวผม push code ขึ้นไปให้
+ลอง deploy ขึ้น server ใหม่ดู
+พรุ่งนี้มี meeting ตอนสิบโมง
+ส่ง email หาลูกค้าแล้วนะ
+ไฟล์ excel อยู่ใน drive
+ขอ link ประชุมหน่อย
+งานนี้ deadline วันศุกร์
+ช่วย review pull request ให้หน่อย
+ตอนนี้ build ไม่ผ่าน
+เปิด terminal แล้วพิมพ์คำสั่งนี้
+database ล่มอีกแล้ว
+ลอง restart เครื่องดูก่อน
+ใช้ password เดิมได้ไหม
+ตั้งค่า config ใหม่หมดเลย
+เขียน test เพิ่มให้ครบ
+ต้อง merge branch นี้ก่อน
+หน้า dashboard โหลดช้ามาก
+ลบ cache แล้วลองใหม่
+ช่วยดู log ให้หน่อย
+ระบบ backup ทำงานทุกคืน
+ส่ง invoice ให้บัญชีแล้ว
+แก้ slide ให้เสร็จก่อนบ่ายสาม
+ขอ feedback ด่วน
+ใช้ template เดิมไปก่อน
+อัพโหลด video ขึ้นไปแล้ว
+ตั้ง schedule โพสต์ไว้แล้ว
+project นี้ใช้ budget เท่าไหร่
+ช่วยทำ report สรุปยอดขาย
+เพิ่ม feature ใหม่ในเวอร์ชันหน้า
+แอปนี้ support ภาษาไทยไหม
+ลง plugin ตัวนี้ก่อน
+ช่วยเช็ค server ให้หน่อย
+ทีม design ส่ง mockup มาแล้ว
+ต้อง approve ก่อนถึงจะ publish ได้
+ลูกค้าขอ refund
+เปลี่ยน logo ให้ใหม่
+ระบบ payment มีปัญหา
+ทำ backup ไว้ก่อนแก้
+เดี๋ยว share screen ให้ดู
+ตอนนี้ online อยู่ไหม
+ผมจะ call กลับไปนะ
+ส่ง file มาทาง email ได้เลย
+ขอ access เข้า folder หน่อย
+ทดสอบบน mobile แล้วหรือยัง
+ช่วยแปล document นี้หน่อย
+หน้า website พังอีกแล้ว
+บัญชี admin ใช้ไม่ได้
+ตั้ง reminder ไว้ให้ด้วย
+# แชตทั่วไป
+วันนี้ว่างไหม ไป coffee กัน
+เย็นนี้ไปกิน pizza ไหม
+เสาร์นี้มี party ที่บ้าน
+เดี๋ยวส่ง location ให้
+ซื้อ ticket คอนเสิร์ตได้แล้ว
+ดู movie เรื่องนี้หรือยัง
+เพลงนี้ฟังใน spotify ได้
+สั่ง delivery มากินดีกว่า
+ร้านนี้รับ card ไหม
+ขอ code ส่วนลดหน่อย
+วันนี้ traffic แย่มาก
+จอง hotel ได้แล้ว
+เที่ยวบิน delay ไปสองชั่วโมง
+ไปเดิน shopping กันไหม
+ลด price ให้หน่อยได้ไหม
+ของ sale อยู่ครึ่งราคา
+ช่วยกด like ให้หน่อย
+ฝาก follow ด้วยนะ
+ส่ง photo มาดูหน่อย
+เปิด camera ไม่ได้
+battery ใกล้หมดแล้ว
+ลืม charger ไว้ที่บ้าน
+wifi ที่นี่ช้ามาก
+ขอ password wifi หน่อย
+game นี้สนุกมาก
+เล่น online กับเพื่อน
+วันนี้ไป gym มา
+กิน salad เป็นมื้อเย็น
+สั่ง burger กับ fries
+ชอบกิน chocolate มาก
+ไปเที่ยว beach กัน
+อากาศดีเหมาะกับ camping
+ฝน storm หนักมาก
+อย่าลืม check in ก่อนนะ
+ซื้อ gift ให้แม่แล้ว
+happy birthday นะเพื่อน
+ขอบคุณสำหรับ support นะ
+ยินดีด้วยกับ promotion
+good morning ทุกคน
+see you พรุ่งนี้
+# YouTube / content
+คลิปใหม่ upload แล้ว
+ช่วย edit video ให้หน่อย
+ทำ thumbnail ให้สวยกว่านี้
+เขียน script ตอนใหม่เสร็จแล้ว
+ยอด view ขึ้นเยอะมาก
+ช่องโดน demonetize หรือเปล่า
+ลง caption ภาษาอังกฤษด้วย
+ใช้ music ที่ไม่ติด copyright
+ต้อง render ใหม่หมด
+ตัด shorts จากคลิปยาว
+ช่วยออกแบบ character ใหม่
+ใช้ voice จาก elevenlabs
+เล่าเรื่อง dragon ตอนต่อไป
+ตระกูล stark ล่มสลายยังไง
+วิเคราะห์ season แปด
+เทียบ book กับ series
+ฉากนี้ใช้ effect เยอะมาก
+ขอ comment ติชมด้วยนะ
+ช่วย subscribe ช่องด้วยครับ
+live สดคืนนี้สามทุ่ม
+ทำ playlist รวมคลิปเก่า
+ตั้ง title ให้น่าคลิก
+ใส่ tag ให้ครบ
+ตอบ comment คนดูทุกคน
+ลอง sponsor กับแบรนด์นี้
+# เครื่องมือ / แอป
+เปิด chrome แล้วเข้าเว็บนี้
+ลง app นี้ใน iPhone
+ใช้ LINE คุยกับลูกค้า
+ส่งไฟล์ทาง google drive
+ประชุมผ่าน zoom
+เก็บโน้ตไว้ใน notion
+คุยงานใน slack
+ทำสไลด์ใน canva
+ตัดต่อใน capcut
+ถาม AI ให้ช่วยเขียน
+ใช้ GitHub เก็บโค้ด
+ติดตั้ง python ก่อน
+ลง windows ใหม่
+อัพเดท mac เป็นเวอร์ชันล่าสุด
+คีย์บอร์ด bluetooth เชื่อมไม่ติด
+เมาส์ wireless ถ่านหมด
+ซื้อ monitor จอใหญ่
+ต่อ printer ไม่ได้
+ลบ app ที่ไม่ใช้ออก
+สมัคร account ใหม่
+ลืม username ของตัวเอง
+logout แล้ว login ใหม่
+ระบบให้ verify เบอร์โทร
+เปิด notification ไว้
+# ประโยคอังกฤษนำ
+meeting พรุ่งนี้เลื่อนไปบ่าย
+update ล่าสุดแก้ปัญหาแล้ว
+server ล่มตั้งแต่เมื่อคืน
+email ฉบับนี้สำคัญมาก
+project ใหม่เริ่มเดือนหน้า
+video นี้ยาวเกินไป
+design หน้าแรกสวยมาก
+report ส่งภายในวันนี้
+budget ไม่พอแล้ว
+client ชอบงานนี้มาก
+team เราทำได้ดีมาก
+plan เที่ยวปีใหม่
