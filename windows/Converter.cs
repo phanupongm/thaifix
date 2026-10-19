@@ -41,7 +41,7 @@ namespace ThaiFix
         const string ThaiNoStart = "ะาำๅฯๆ" + ThaiMarks;
         const string ThaiAllowedPunct = " .,!?\"'()-";
         const string SentPunct = ".,!?:;";
-        const string PunctThai = "[]\;'";
+        const string PunctThai = "[]\\;'";
 
         static HashSet<string> english, thai;
         static int thaiMaxLen = 1;

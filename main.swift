@@ -94,13 +94,13 @@ let thaiTones = Set("่้๊๋".unicodeScalars)
 let thaiNoStart = Set("ะาำๅฯๆ".unicodeScalars).union(thaiMarks)
 let thaiAllowedPunct = Set(" .,!?\"'()-".unicodeScalars)
 let sentPunct = Set(".,!?:;".unicodeScalars)
-let punctThai = Set("[]\;'".unicodeScalars)
+let punctThai = Set("[]\\;'".unicodeScalars)
 
 func allLatin(_ s: String) -> Bool { !s.isEmpty && s.unicodeScalars.allSatisfy(isLatinLetter) }
 
 /// กฎการสะกดไทยแบบคร่าว ๆ
 func validThai(_ t: String) -> Bool {
-    let sc = t.unicodeScalars.filter(isThai)
+    let sc = Array(t.unicodeScalars).filter(isThai)
     guard let first = sc.first, let last = sc.last else { return false }
     if thaiNoStart.contains(first) || thaiLeadVowels.contains(last) { return false }
     for i in 0..<sc.count {
