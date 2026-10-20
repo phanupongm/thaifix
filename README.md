@@ -10,7 +10,13 @@
 </p>
 
 <p align="center">
-  <code>l;ylfu</code> &nbsp;→&nbsp; <b>สวัสดี</b> &nbsp;&nbsp;·&nbsp;&nbsp; <code>้ำสสน ไนพสก</code> &nbsp;→&nbsp; <b>hello world</b>
+  <img src="docs/demo.gif" width="720" alt="ThaiFix demo: typing in the wrong layout, pressing Option+Command+L, and the text is fixed">
+</p>
+
+<p align="center">
+  <a href="https://github.com/phanupongm/thaifix/releases/latest/download/ThaiFix.zip"><b>⬇ Download for Mac</b></a>
+  &nbsp;·&nbsp;
+  <a href="https://github.com/phanupongm/thaifix/releases/latest/download/ThaiFix.exe"><b>⬇ Download for Windows</b></a>
 </p>
 
 ---

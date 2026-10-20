@@ -1,0 +1,73 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:UI;src:url(fonts/inter-latin-400-normal.woff);font-weight:400;unicode-range:U+0000-024F,U+2000-2BFF}
+@font-face{font-family:UI;src:url(fonts/inter-latin-600-normal.woff);font-weight:600;unicode-range:U+0000-024F,U+2000-2BFF}
+@font-face{font-family:UI;src:url(fonts/noto-sans-thai-thai-400-normal.woff);font-weight:400;unicode-range:U+0E00-0E7F}
+@font-face{font-family:UI;src:url(fonts/noto-sans-thai-thai-600-normal.woff);font-weight:600;unicode-range:U+0E00-0E7F}
+*{box-sizing:border-box;margin:0}
+html,body{width:800px;height:420px;overflow:hidden}
+body{font-family:UI,sans-serif;background:#EEF0F6;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px}
+.top{display:flex;align-items:center;gap:12px;width:720px}
+.top img{width:40px;height:40px}
+.top .name{font-weight:600;font-size:20px;color:#1B2563}
+.cap{margin-left:auto;font-size:16px;color:#4A5275;text-align:right;line-height:1.35}
+.cap b{color:#1B2563}
+.win{width:720px;background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(20,27,77,.12);overflow:hidden}
+.bar{height:36px;background:#F5F6FA;border-bottom:1px solid #E4E6EF;display:flex;align-items:center;padding:0 14px;gap:7px}
+.dot{width:11px;height:11px;border-radius:50%;background:#D5D8E4}
+.bar span{margin-left:10px;font-size:13px;color:#8A90A8}
+.field{padding:34px 28px;font-size:34px;color:#1A1D2E;min-height:120px;display:flex;align-items:center;white-space:pre}
+.bad{color:#C2410C;background:#FFF1EA;border-radius:6px}
+.good{color:#15803D;background:#E8F7EE;border-radius:6px;transition:none}
+.caret{display:inline-block;width:2px;height:40px;background:#2B3A8F;margin-left:2px;vertical-align:middle}
+.keys{display:flex;gap:8px;align-items:center;height:52px}
+.k{min-width:52px;height:48px;padding:0 12px;border-radius:10px;background:#fff;border:1px solid #CDD2E3;border-bottom-width:4px;
+   display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600;color:#1B2563}
+.k.down{border-bottom-width:1px;transform:translateY(3px);background:#2B3A8F;color:#fff;border-color:#2B3A8F}
+.plus{color:#8A90A8;font-size:18px}
+.hint{font-size:15px;color:#8A90A8}
+</style></head><body>
+<div class="top"><img src="icon_256.png"><div class="name">ThaiFix</div><div class="cap" id="cap"></div></div>
+<div class="win"><div class="bar"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span>Chat</span></div>
+<div class="field" id="field"></div></div>
+<div class="keys" id="keys"></div>
+<script>
+const SCENES = [
+  {pre:"นัดกัน ", bad:"l;ylfu", good:"สวัสดี",
+   cap:"<b>ลืมสลับภาษา?</b> พิมพ์ต่อไปเลย<br>Forgot to switch layout? Keep typing"},
+  {pre:"อัพเดท repo ", bad:",k.shsojvp", good:"มาให้หน่อย",
+   cap:"<b>แก้เฉพาะคำที่ผิด</b> — repo ไม่ถูกแตะ<br>Only the wrong words change"},
+  {pre:"ใช้เสียงจาก", bad:"ำสำอำืสฟิห", good:"elevenlabs",
+   cap:"<b>พิมพ์ติดกันก็แยกให้</b><br>Works even without a space"},
+];
+const DUR = 5.4;         // วินาทีต่อฉาก
+const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+function render(t){
+  const i = Math.min(SCENES.length-1, Math.floor(t/DUR)), s = SCENES[i], u = t - i*DUR;
+  document.getElementById('cap').innerHTML = s.cap;
+  const preCh = Array.from(s.pre), badCh = Array.from(s.bad);
+  const typeEnd = 0.5 + (preCh.length + badCh.length)*0.075;
+  const press = typeEnd + 0.7, swap = press + 0.25;
+  let html;
+  if (u < swap){
+    const n = Math.max(0, Math.floor((u-0.5)/0.075));
+    const a = preCh.slice(0, Math.min(n, preCh.length)).join("");
+    const b = badCh.slice(0, Math.max(0, n - preCh.length)).join("");
+    html = esc(a) + (b ? `<span class="bad">${esc(b)}</span>` : "");
+  } else {
+    const fade = Math.max(0, 1 - (u - swap)/1.6);
+    html = esc(s.pre) + `<span class="good" style="background:rgba(232,247,238,${fade})">${esc(s.good)}</span>`;
+  }
+  const blink = (Math.floor(u*2.5) % 2 === 0) || u < typeEnd;
+  document.getElementById('field').innerHTML = html + (blink ? '<span class="caret"></span>' : '<span class="caret" style="opacity:0"></span>');
+  const down = u >= press && u < press + 0.45;
+  const keys = document.getElementById('keys');
+  if (u >= press - 0.35) {
+    const cls = down ? "k down" : "k";
+    keys.innerHTML = `<div class="${cls}">⌥</div><div class="plus">+</div><div class="${cls}">⌘</div><div class="plus">+</div><div class="${cls}">L</div>`
+      + `<div class="hint" style="margin-left:14px">Windows: Ctrl + Alt + L</div>`;
+  } else keys.innerHTML = "";
+}
+window.TOTAL = SCENES.length*DUR;
+render(0);
+</script></body></html>
